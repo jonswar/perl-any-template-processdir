@@ -10,7 +10,7 @@ use Moose::Util::TypeConstraints;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 has 'dest_dir' => ( is => 'ro', required => 1 );
 has 'dir_create_mode' => ( is => 'ro', isa => 'Int', default => oct(775) );
