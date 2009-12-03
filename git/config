@@ -5,7 +5,7 @@
 	logallrefupdates = true
 	ignorecase = true
 [remote "origin"]
-	url = git@github.com:jonswar/template-any-processdir
+	url = git@github.com:jonswar/perl-any-template-processdir.git
 	fetch = +refs/heads/*:refs/remotes/origin/*
 [branch "master"]
 	merge = master
