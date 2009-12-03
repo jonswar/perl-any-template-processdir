@@ -1,6 +1,9 @@
 package Any::Template::ProcessDir;
 use 5.006;
+use File::Basename;
 use File::Find::Wanted;
+use File::Path qw(make_path remove_tree);
+use File::Slurp qw(read_file write_file);
 use File::Spec::Functions qw(catfile catdir);
 use Moose;
 use Moose::Util::TypeConstraints;
@@ -16,7 +19,7 @@ has 'process_text' => ( is => 'ro', isa => 'CodeRef', required => 1 );
 has 'ignore_file_suffix'   => ( is => 'ro' );
 has 'readme_filename'      => ( is => 'ro', default => 'README' );
 has 'source_dir'           => ( is => 'ro', required => 1 );
-has 'template_file_suffix' => ( is => 'ro', default => qr/\.src$/ );
+has 'template_file_suffix' => ( is => 'ro', default => '.src' );
 
 sub process_dir {
     my ($self) = @_;
@@ -24,21 +27,17 @@ sub process_dir {
     my $source_dir = $self->source_dir;
     my $dest_dir   = $self->dest_dir;
     remove_tree($dest_dir);
+    die "could not remove '$dest_dir'" if -d $dest_dir;
 
     my $ignore_file_suffix = $self->ignore_file_suffix;
     my $ignore_file_regex =
       defined($ignore_file_suffix) ? qr/\Q$ignore_file_suffix\E$/ : qr/(?!)/;
     my @source_files =
-      find_wanted( sub { $_ !~ $ignore_file_regex }, $source_dir );
+      find_wanted( sub { -f && $_ !~ $ignore_file_regex }, $source_dir );
+    my $template_file_suffix = $self->template_file_suffix;
+
     foreach my $source_file (@source_files) {
-        substr( ( my $dest_file = $source_file ), 0, length($source_dir) ) =
-          $dest_dir;
-        if ( defined( $self->template_file_suffix ) ) {
-            $dest_file =
-              substr( $dest_file, 0,
-                -1 * length( $self->template_file_suffix ) );
-        }
-        $self->generate_dest_file( $source_file, $dest_file );
+        $self->generate_dest_file($source_file);
     }
 
     $self->generate_readme();
@@ -46,21 +45,33 @@ sub process_dir {
 }
 
 sub generate_dest_file {
-    my ( $self, $source_file, $dest_file ) = @_;
+    my ( $self, $source_file ) = @_;
+
+    my $template_file_suffix = $self->template_file_suffix;
+    my $template_file_regex =
+      defined($template_file_suffix) ? qr/\Q$template_file_suffix\E$/ : qr/.|/;
+    my $source_text = read_file($source_file);
+    my $dest_text;
+
+    substr( ( my $dest_file = $source_file ), 0, length( $self->source_dir ) ) =
+      $self->dest_dir;
+
+    if ( $source_file =~ $template_file_regex ) {
+        $dest_file =
+          substr( $dest_file, 0,
+            -1 * length( $self->template_file_suffix || '' ) );
+        $dest_text = $self->process_text->( $source_text, $self );
+    }
+    else {
+        $dest_text = $source_text;
+    }
+
+    die "$dest_file already exists!" if -f $dest_file;
 
     make_path( dirname($dest_file) );
     chmod( $self->dir_create_mode(), dirname($dest_file) )
       if defined( $self->dir_create_mode() );
 
-    my $template_file_suffix = $self->template_file_suffix;
-    my $template_file_regex =
-      defined($template_file_suffix) ? qr/\Q$template_file_suffix\E$/ : qr/.|/;
-
-    my $source_text = read_file($source_file);
-    my $dest_text =
-      ( $source_file =~ $template_file_regex )
-      ? $self->process_text->( $source_text, $self )
-      : $source_text;
     write_file( $dest_file, $dest_text );
     chmod( $self->file_create_mode(), $dest_file )
       if defined( $self->file_create_mode() );
