@@ -128,7 +128,7 @@ Any::Template::ProcessDir -- Process a directory of templates
 
 Recursively processes a directory of templates, generating a parallel directory
 of result files. Each file in the source directory may be template-processed,
-copied, or ignored depending on its suffix.
+copied, or ignored depending on its pathname.
 
 =head1 CONSTRUCTOR
 
