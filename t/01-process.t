@@ -1,6 +1,7 @@
 #!perl -w
 use Any::Template::ProcessDir;
 use Cwd qw(realpath);
+use File::Basename;
 use File::Copy::Recursive qw(dircopy);
 use File::Find::Wanted;
 use File::Slurp;
@@ -16,6 +17,7 @@ my $dest_dir = "$root_dir/dest";
 my $pd = Any::Template::ProcessDir->new(
     source_dir   => $source_dir,
     dest_dir     => $dest_dir,
+    ignore_files => sub { basename( $_[0] ) =~ qr/^\./ },
     process_text => sub { return uc( $_[0] ) }
 );
 $pd->process_dir();

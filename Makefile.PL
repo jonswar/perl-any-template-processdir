@@ -14,6 +14,7 @@ requires 'File::Find::Wanted' => 0;
 requires 'File::Path' => '2.07';
 requires 'File::Slurp' => 0;
 requires 'File::Spec' => '3.0';
+requires 'Moose' => '0.66';
 
 license 'perl';
 

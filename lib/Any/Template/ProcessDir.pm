@@ -16,10 +16,10 @@ has 'dest_dir' => ( is => 'ro', required => 1 );
 has 'dir_create_mode' => ( is => 'ro', isa => 'Int', default => oct(775) );
 has 'file_create_mode' => ( is => 'ro', isa => 'Int', default => oct(444) );
 has 'process_text' => ( is => 'ro', isa => 'CodeRef', required => 1 );
-has 'ignore_file_suffix'   => ( is => 'ro' );
-has 'readme_filename'      => ( is => 'ro', default => 'README' );
+has 'ignore_files' => ( is => 'ro', isa => 'CodeRef', default => sub { 0 } );
+has 'readme_filename'      => ( is => 'ro', default  => 'README' );
 has 'source_dir'           => ( is => 'ro', required => 1 );
-has 'template_file_suffix' => ( is => 'ro', default => '.src' );
+has 'template_file_suffix' => ( is => 'ro', default  => '.src' );
 
 sub process_dir {
     my ($self) = @_;
@@ -29,11 +29,9 @@ sub process_dir {
     remove_tree($dest_dir);
     die "could not remove '$dest_dir'" if -d $dest_dir;
 
-    my $ignore_file_suffix = $self->ignore_file_suffix;
-    my $ignore_file_regex =
-      defined($ignore_file_suffix) ? qr/\Q$ignore_file_suffix\E$/ : qr/(?!)/;
+    my $ignore_files = $self->ignore_files;
     my @source_files =
-      find_wanted( sub { -f && $_ !~ $ignore_file_regex }, $source_dir );
+      find_wanted( sub { -f && !$ignore_files->($_) }, $source_dir );
     my $template_file_suffix = $self->template_file_suffix;
 
     foreach my $source_file (@source_files) {
@@ -167,10 +165,10 @@ Permissions mode to use when creating destination directories. Defaults to
 Permissions mode to use when creating destination files. Defaults to 0444
 (read-only), so that destination files are not accidentally edited.
 
-=item ignore_file_suffix
+=item ignore_files
 
-Suffix of files to be ignored in source directory. Defaults to none (all files
-will be processed).
+Coderef which takes a full pathname and returns true if the file should be
+ignored. By default, all files will be considered.
 
 =item readme_filename
 
