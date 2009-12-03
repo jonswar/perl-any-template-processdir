@@ -7,10 +7,11 @@ author 'Jonathan Swartz <swartz@pobox.com>';
 
 perl_version '5.006';
 
-build_requires 'Test::Class' => 0;
-build_requires 'Test::Most'  => 0;
+build_requires 'Test::More' => 0;
 
-# requires 'List::MoreUtils'           => '0.13';
+requires 'File::Find::Wanted' => 0;
+requires 'File::Spec' => '3.0';
+requires 'File::Path' => '2.07';
 
 license 'perl';
 
