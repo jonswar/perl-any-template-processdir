@@ -2,7 +2,7 @@ Revision history for Template-Any-ProcessDir
 
 ** denotes an incompatible change
 
-0.02  Dec 3, 2009
+0.02  Jun 5, 2011
 
 - Add process_file as alternative to process_text
 
