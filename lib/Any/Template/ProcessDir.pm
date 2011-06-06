@@ -139,6 +139,19 @@ Any::Template::ProcessDir -- Process a directory of templates
         }
     );
     $pd->process_dir();
+
+    # or
+
+    my $pd = Any::Template::ProcessDir->new(
+        source_dir   => '/path/to/source/dir',
+        dest_dir     => '/path/to/dest/dir',
+        process_text => sub {
+            my $file = $_[0];
+            # do something with $file, return content
+        }
+    );
+    $pd->process_dir();
+
     
 =head1 DESCRIPTION
 
