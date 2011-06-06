@@ -4,7 +4,7 @@ use Cwd qw(realpath);
 use File::Basename;
 use File::Copy::Recursive qw(dircopy);
 use File::Find::Wanted;
-use File::Path qw(rmtree);
+use File::Path qw(remove_tree);
 use File::Slurp;
 use File::Temp qw(tempdir);
 use Test::More;
@@ -19,8 +19,8 @@ my $dest_dir   = "$root_dir/dest";
 sub try {
     my (%params) = @_;
 
-    rmtree($source_dir);
-    rmtree($dest_dir);
+    remove_tree($source_dir);
+    remove_tree($dest_dir);
     dircopy( "t/source", $source_dir );
 
     my $pd = Any::Template::ProcessDir->new(
