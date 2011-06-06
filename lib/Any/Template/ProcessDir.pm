@@ -12,14 +12,19 @@ use warnings;
 
 our $VERSION = '0.02';
 
-has 'dest_dir' => ( is => 'ro', required => 1 );
-has 'dir_create_mode' => ( is => 'ro', isa => 'Int', default => oct(775) );
+has 'dest_dir'         => ( is => 'ro', required => 1 );
+has 'dir_create_mode'  => ( is => 'ro', isa => 'Int', default => oct(775) );
 has 'file_create_mode' => ( is => 'ro', isa => 'Int', default => oct(444) );
-has 'process_text' => ( is => 'ro', isa => 'CodeRef', required => 1 );
-has 'ignore_files' => ( is => 'ro', isa => 'CodeRef', default => sub { 0 } );
-has 'readme_filename'      => ( is => 'ro', default  => 'README' );
+has 'process_file' =>
+( is => 'ro', isa => 'CodeRef', default => sub { \&_default_process_file } );
+
+has 'process_text' =>
+( is => 'ro', isa => 'CodeRef', default => sub { \&_default_process_text } );
+
+has 'ignore_files'         => ( is => 'ro', isa => 'CodeRef', default => sub { sub { 0 } } );
+has 'readme_filename'      => ( is => 'ro', default => 'README' );
 has 'source_dir'           => ( is => 'ro', required => 1 );
-has 'template_file_suffix' => ( is => 'ro', default  => '.src' );
+has 'template_file_suffix' => ( is => 'ro', default => '.src' );
 
 sub process_dir {
     my ($self) = @_;
@@ -48,20 +53,20 @@ sub generate_dest_file {
     my $template_file_suffix = $self->template_file_suffix;
     my $template_file_regex =
       defined($template_file_suffix) ? qr/\Q$template_file_suffix\E$/ : qr/.|/;
-    my $source_text = read_file($source_file);
-    my $dest_text;
 
     substr( ( my $dest_file = $source_file ), 0, length( $self->source_dir ) ) =
       $self->dest_dir;
 
+    my $dest_text;
     if ( $source_file =~ $template_file_regex ) {
         $dest_file =
           substr( $dest_file, 0,
             -1 * length( $self->template_file_suffix || '' ) );
-        $dest_text = $self->process_text->( $source_text, $self );
+        my $code = $self->process_file;
+        $dest_text = $code->( $source_file, $self );
     }
     else {
-        $dest_text = $source_text;
+        $dest_text = read_file($source_file);
     }
 
     die "$dest_file already exists!" if -f $dest_file;
@@ -73,6 +78,19 @@ sub generate_dest_file {
     write_file( $dest_file, $dest_text );
     chmod( $self->file_create_mode(), $dest_file )
       if defined( $self->file_create_mode() );
+}
+
+sub _default_process_file {
+    my ( $file, $self ) = @_;
+
+    my $code = $self->process_text;
+    return $code->( read_file($file), $self );
+}
+
+sub _default_process_text {
+    my ( $text, $self ) = @_;
+
+    return $text;
 }
 
 sub generate_readme {
@@ -144,6 +162,18 @@ Directory containing the template files.
 
 Directory where you want to generate result files.
 
+=back
+
+Plus one of these:
+
+=over
+
+=item process_file
+
+A code reference that takes a single argument, the full template filename, and
+returns the result string. This can use Any::Template or another method
+altogether.
+
 =item process_text
 
 A code reference that takes a single argument, the template text, and returns
@@ -196,23 +226,8 @@ recreated, to eliminate any old files from previous processing.
 
 =back
 
-=head1 AUTHOR
-
-Jonathan Swartz
-
 =head1 SEE ALSO
 
 L<Any::Template>
-
-=head1 COPYRIGHT & LICENSE
-
-Copyright (C) 2009 Jonathan Swartz.
-
-Any::Template::ProcessDir is provided "as is" and without any express or
-implied warranties, including, without limitation, the implied warranties of
-merchantibility and fitness for a particular purpose.
-
-This program is free software; you can redistribute it and/or modify it under
-the same terms as Perl itself.
 
 =cut
