@@ -2,6 +2,8 @@ Revision history for Template-Any-ProcessDir
 
 ** denotes an incompatible change
 
+0.04  Jun 15, 2011
+
 0.03  Jun 15, 2011
 
 - Ignore errors when symlinking, e.g. for win32
