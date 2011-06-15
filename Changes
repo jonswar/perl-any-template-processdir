@@ -4,6 +4,8 @@ Revision history for Template-Any-ProcessDir
 
 0.03  Jun 5, 2011
 
+- Ignore errors when symlinking, e.g. for win32
+
 0.02  Jun 5, 2011
 
 - Add process_file as alternative to process_text
