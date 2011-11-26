@@ -30,7 +30,10 @@ sub BUILD {
       if (
         defined( $self->dir ) ==
         ( defined( $self->source_dir ) && defined( $self->dest_dir ) ) );
-    $self->{same_dir} = defined( $self->dir );
+    if ( defined( $self->dir ) ) {
+        $self->{same_dir} = 1;
+        $self->{source_dir} = $self->{dest_dir} = $self->dir;
+    }
 }
 
 sub process_dir {
