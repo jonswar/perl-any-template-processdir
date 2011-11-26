@@ -150,8 +150,10 @@ Any::Template::ProcessDir -- Process a directory of templates
 
     use Any::Template::ProcessDir;
 
+    # Process templates and generate result files in a single directory
+    #
     my $pd = Any::Template::ProcessDir->new(
-        source_dir   => '/path/to/dir',
+        dir => '/path/to/dir',
         process_text => sub {
             my $template = Any::Template->new( Backend => '...', String => $_[0] );
             $template->process({ ... });
@@ -159,6 +161,8 @@ Any::Template::ProcessDir -- Process a directory of templates
     );
     $pd->process_dir();
 
+    # Process templates and generate result files to a separate directory
+    #
     my $pd = Any::Template::ProcessDir->new(
         source_dir => '/path/to/source/dir',
         dest_dir   => '/path/to/dest/dir',
