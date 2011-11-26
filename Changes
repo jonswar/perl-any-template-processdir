@@ -2,7 +2,7 @@ Revision history for Template-Any-ProcessDir
 
 ** denotes an incompatible change
 
-0.04  Jun 15, 2011
+0.04  Nov 25, 2011
 
 - Allow processing within a single dir, as alternative to using separate dir
 
