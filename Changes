@@ -4,7 +4,8 @@ Revision history for Template-Any-ProcessDir
 
 0.04  Nov 27, 2011
 
-- Allow processing within a single dir, as alternative to using separate dir
+- Allow result files to be generated inside same dir instead of separate dir
+- Document that process_file and process_text take object as second arg
 
 0.03  Jun 15, 2011
 
