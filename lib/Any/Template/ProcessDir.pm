@@ -215,14 +215,16 @@ templates, specify I<source_dir> and I<dest_dir>.
 
 =item process_file
 
-A code reference that takes a single argument, the full template filename, and
-returns the result string. This can use L<Any::Template> or another method
-altogether.
+A code reference that takes the full template filename and the
+C<Any::Template::ProcessDir> object as arguments, and returns the result
+string. This can use L<Any::Template> or another method altogether. By default
+it calls L</process_text> on the contents of the file.
 
 =item process_text
 
-A code reference that takes a single argument, the template text, and returns
-the result string. This can use L<Any::Template> or another method altogether.
+A code reference that takes the template text and the
+C<Any::Template::ProcessDir> object as arguments, and returns the result
+string. This can use L<Any::Template> or another method altogether.
 
 =back
 
