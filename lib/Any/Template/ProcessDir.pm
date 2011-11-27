@@ -114,8 +114,8 @@ sub _default_process_text {
 sub generate_readme {
     my $self = shift;
 
-    my $readme_file = catfile( $self->dest_dir, $self->readme_filename );
-    if ( defined($readme_file) ) {
+    if ( defined( $self->readme_filename ) ) {
+        my $readme_file = catfile( $self->dest_dir, $self->readme_filename );
         unlink($readme_file);
         write_file(
             $readme_file,
@@ -250,7 +250,8 @@ ignored. By default, all files will be considered.
 =item readme_filename
 
 Name of a README file to generate in the destination directory - defaults to
-"README". No effect if you are using a single directory.
+"README". No file will be generated if you pass undef or if you are using a
+single directory.
 
 =item template_file_suffix
 
