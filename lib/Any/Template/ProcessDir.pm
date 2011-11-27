@@ -16,8 +16,8 @@ has 'dir'                  => ( is => 'ro' );
 has 'dir_create_mode'      => ( is => 'ro', isa => 'Int', default => oct(775) );
 has 'file_create_mode'     => ( is => 'ro', isa => 'Int', default => oct(444) );
 has 'ignore_files'         => ( is => 'ro', isa => 'CodeRef', default => sub { sub { 0 } } );
-has 'process_file'         => ( is => 'ro', isa => 'CodeRef', default => sub { \&_default_process_file } );
-has 'process_text'         => ( is => 'ro', isa => 'CodeRef', default => sub { \&_default_process_text } );
+has 'process_file'         => ( is => 'ro', isa => 'CodeRef', lazy_build => 1 );
+has 'process_text'         => ( is => 'ro', isa => 'CodeRef', lazy_build => 1 );
 has 'readme_filename'      => ( is => 'ro', default => 'README' );
 has 'same_dir'             => ( is => 'ro', init_arg => undef );
 has 'source_dir'           => ( is => 'ro' );
@@ -98,17 +98,17 @@ sub generate_dest_file {
       if defined( $self->file_create_mode() );
 }
 
-sub _default_process_file {
-    my ( $file, $self ) = @_;
+sub _build_process_file {
+    return sub {
+        my ( $file, $self ) = @_;
 
-    my $code = $self->process_text;
-    return $code->( read_file($file), $self );
+        my $code = $self->process_text;
+        return $code->( read_file($file), $self );
+      }
 }
 
-sub _default_process_text {
-    my ( $text, $self ) = @_;
-
-    return $text;
+sub _build_process_text {
+    return sub { die "must specify one of process_file or process_text" }
 }
 
 sub generate_readme {
