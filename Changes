@@ -4,6 +4,8 @@ Revision history for Template-Any-ProcessDir
 
 0.05  Nov 27, 2011
 
+- Don't chmod non-template files in single-dir mode
+
 0.04  Nov 27, 2011
 
 - Allow result files to be generated inside same dir instead of separate dir
