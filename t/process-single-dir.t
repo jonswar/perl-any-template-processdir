@@ -33,7 +33,9 @@ sub try {
     is( read_file("$dir/bar/baz"),     "THIS IS BAR/BAZ.SRC\n", "bar/baz.src" );
     is( read_file("$dir/fop.txt"),     "this is fop.txt\n",     "fop.txt" );
     is( read_file("$dir/bar/bap.txt"), "this is bar/bap.txt\n", "bar/bap.txt" );
-    ok( !-f "$dir/README", "no README" );
+    ok( !-f "$dir/README",  "no README" );
+    ok( !-w "$dir/bar/baz", "bar/baz not writable" );
+    ok( -w "$dir/fop.txt",  "fop.txt writable" );
 
     write_file( "$dir/bar/baz.src", "overwrote\n" );
     $pd->process_dir();

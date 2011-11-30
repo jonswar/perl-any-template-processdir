@@ -21,6 +21,7 @@ has 'process_text'         => ( is => 'ro', isa => 'CodeRef', lazy_build => 1 );
 has 'readme_filename'      => ( is => 'ro', default => 'README' );
 has 'same_dir'             => ( is => 'ro', init_arg => undef );
 has 'source_dir'           => ( is => 'ro' );
+has 'template_file_regex'  => ( is => 'ro', lazy_build => 1 );
 has 'template_file_suffix' => ( is => 'ro', default => '.src' );
 
 sub BUILD {
@@ -34,6 +35,13 @@ sub BUILD {
         $self->{same_dir} = 1;
         $self->{source_dir} = $self->{dest_dir} = $self->dir;
     }
+}
+
+sub _build_template_file_regex {
+    my $self                 = shift;
+    my $template_file_suffix = $self->template_file_suffix;
+    return
+      defined($template_file_suffix) ? qr/\Q$template_file_suffix\E$/ : qr/.|/;
 }
 
 sub process_dir {
@@ -65,10 +73,7 @@ sub process_dir {
 sub generate_dest_file {
     my ( $self, $source_file ) = @_;
 
-    my $template_file_suffix = $self->template_file_suffix;
-    my $template_file_regex =
-      defined($template_file_suffix) ? qr/\Q$template_file_suffix\E$/ : qr/.|/;
-
+    my $template_file_regex = $self->template_file_regex;
     substr( ( my $dest_file = $source_file ), 0, length( $self->source_dir ) ) =
       $self->dest_dir;
 
@@ -80,8 +85,11 @@ sub generate_dest_file {
         my $code = $self->process_file;
         $dest_text = $code->( $source_file, $self );
     }
-    else {
+    elsif ( !$self->same_dir ) {
         $dest_text = read_file($source_file);
+    }
+    else {
+        return;
     }
 
     if ( $self->same_dir ) {
