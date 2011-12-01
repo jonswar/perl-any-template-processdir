@@ -2,10 +2,13 @@ Revision history for Template-Any-ProcessDir
 
 ** denotes an incompatible change
 
+0.06  Nov 29, 2011
+
+- Pass full path to ignore_files
+
 0.05  Nov 29, 2011
 
 - Don't chmod non-template files in single-dir mode
-- Pass full path to ignore_files
 
 0.04  Nov 27, 2011
 
