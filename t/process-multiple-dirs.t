@@ -24,9 +24,10 @@ sub try {
     dircopy( "t/source", $source_dir );
 
     my $pd = Any::Template::ProcessDir->new(
-        source_dir   => $source_dir,
-        dest_dir     => $dest_dir,
-        ignore_files => sub { basename( $_[0] ) =~ qr/^\./ },
+        source_dir => $source_dir,
+        dest_dir   => $dest_dir,
+        ignore_files =>
+          sub { basename( $_[0] ) =~ /^\./ || $_[0] =~ m|bar/blargh| },
         %params
     );
     $pd->process_dir();
