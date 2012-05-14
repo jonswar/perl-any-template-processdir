@@ -4,6 +4,8 @@ Revision history for Template-Any-ProcessDir
 
 0.07  Dec 1, 2011
 
+- Make writability test author-only as it does not work on all cpantesters
+
 0.06  Dec 1, 2011
 
 - Pass full path to ignore_files
