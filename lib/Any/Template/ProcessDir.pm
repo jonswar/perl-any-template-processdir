@@ -213,7 +213,7 @@ templates, specify I<source_dir> and I<dest_dir>.
 
     my $pd = Any::Template::ProcessDir->new(
         source_dir => '/path/to/source/dir',
-        source_dir => '/path/to/dest/dir',
+        dest_dir => '/path/to/dest/dir',
         ...
     );
 
