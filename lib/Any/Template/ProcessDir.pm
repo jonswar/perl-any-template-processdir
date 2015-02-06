@@ -10,6 +10,7 @@ use Moose::Util::TypeConstraints;
 use Try::Tiny;
 use strict;
 use warnings;
+#VERSION
 
 has 'dest_dir'             => ( is => 'ro' );
 has 'dir'                  => ( is => 'ro' );
