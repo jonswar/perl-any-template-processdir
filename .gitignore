@@ -1,4 +1,6 @@
+.tidyall.d
 data
 htdocs
 release
+tidyall.ini
 tmp
